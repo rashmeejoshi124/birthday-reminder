@@ -1,0 +1,16 @@
+package com.rashmi.birthdayreminder.db
+
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
+
+@Dao
+interface BirthdayDao {
+
+    @Insert
+    suspend fun insertBirthday(birthday: BirthdayEntity)
+
+    @Query("SELECT * FROM birthdays")
+    fun getBirthdays(): Flow<List<BirthdayEntity>>
+}

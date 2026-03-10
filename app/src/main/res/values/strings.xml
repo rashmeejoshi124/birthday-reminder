@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Birthday Reminder</string>
+    <string name="add_bday">Add Birthday</string>
+    <string name="name">Name</string>
+    <string name="dob">DD/MM/YYYY</string>
+    <string name="upcoming_bday">Upcoming Birthdays</string>
+</resources>
