@@ -18,7 +18,7 @@ class BirthdayRepo @Inject constructor(
         )
     }
 
-    fun getBirthdays(): Flow<List<BirthdayEntity>> {
+    override fun getBirthdays(): Flow<List<BirthdayEntity>> {
         return dao.getBirthdays()
     }
 }
