@@ -1,11 +1,14 @@
 package com.rashmi.birthdayreminder.worker
 
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import androidx.core.app.NotificationCompat
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.rashmi.birthdayreminder.MainActivity
 import com.rashmi.birthdayreminder.R
 import com.rashmi.birthdayreminder.domain.usecase.ScheduleBirthdayReminderUseCase
 import com.rashmi.birthdayreminder.notifications.NotificationConstants
@@ -35,16 +38,28 @@ class BirthdayReminderWorker @AssistedInject constructor(
     private fun showNotification(name: String) {
         val manager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val notification = NotificationCompat.Builder(
-            context,
-            NotificationConstants.CHANNEL_ID
-        )
+
+        val notification = NotificationCompat.Builder(context, NotificationConstants.CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle("Birthday Reminder 🎉")
             .setContentText("Don't forget to wish $name!")
+            .setContentIntent(getPendingIntent())
+            .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .build()
+
         manager.notify(name.hashCode(), notification)
+    }
+
+    private fun getPendingIntent(): PendingIntent {
+        val intent = Intent(context, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        return PendingIntent.getActivity(
+            context,
+            0,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
     }
 
     companion object {
