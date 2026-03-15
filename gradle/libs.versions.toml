@@ -43,9 +43,9 @@ room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 #executes workers
 work-runtime = { module = "androidx.work:work-runtime-ktx", version.ref = "workManager" }
 #connects Hilt with WorkManager
-hilt-work = { module = "androidx.hilt:hilt-work", version = "hiltWorkManager" }
+hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "hiltWorkManager" }
 #generates injection code
-hilt-work-compiler = { module = "androidx.hilt:hilt-compiler", version = "hiltWorkManager" }
+hilt-work-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltWorkManager" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

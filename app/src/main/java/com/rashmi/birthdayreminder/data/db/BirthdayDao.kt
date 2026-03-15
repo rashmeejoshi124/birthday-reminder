@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 interface BirthdayDao {
 
     @Insert
-    suspend fun insertBirthday(birthday: BirthdayEntity)
+    suspend fun insertBirthday(birthday: BirthdayEntity): Long
 
     @Query("SELECT * FROM birthdays")
     fun getBirthdays(): Flow<List<BirthdayEntity>>

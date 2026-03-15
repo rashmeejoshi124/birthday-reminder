@@ -10,8 +10,8 @@ class BirthdayRepo @Inject constructor(
     private val dao: BirthdayDao
 ) : IBirthdayRepo {
 
-    override suspend fun insertBirthday(name: String, date: LocalDate) {
-        dao.insertBirthday(
+    override suspend fun insertBirthday(name: String, date: LocalDate): Long {
+        return dao.insertBirthday(
             BirthdayEntity(
                 name = name, date = date,
             )

@@ -6,7 +6,7 @@ import java.time.LocalDate
 
 interface IBirthdayRepo {
 
-    suspend fun insertBirthday(name: String, date: LocalDate)
+    suspend fun insertBirthday(name: String, date: LocalDate): Long
 
     fun getBirthdays(): Flow<List<BirthdayEntity>>
 }

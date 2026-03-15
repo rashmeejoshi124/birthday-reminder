@@ -6,6 +6,7 @@ import com.rashmi.birthdayreminder.domain.usecase.IGetSortedBirthdayUseCase
 import com.rashmi.birthdayreminder.domain.model.BirthdayData
 import com.rashmi.birthdayreminder.domain.model.UiEvent
 import com.rashmi.birthdayreminder.data.repository.IBirthdayRepo
+import com.rashmi.birthdayreminder.domain.usecase.ScheduleBirthdayReminderUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +24,9 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val repository: IBirthdayRepo,
-    private val sortedBirthdaysUseCase: IGetSortedBirthdayUseCase
+    private val sortedBirthdaysUseCase: IGetSortedBirthdayUseCase,
+    private val scheduleReminder: ScheduleBirthdayReminderUseCase
+
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(BirthdayData())
@@ -82,11 +85,12 @@ class MainViewModel @Inject constructor(
             return
         }
         viewModelScope.launch {
-            repository.insertBirthday(
+            val id = repository.insertBirthday(
                 name = name,
                 date = date
             )
             _events.emit(UiEvent.BirthdayAdded)
+            scheduleReminder(id.toInt(), name, date)
             clearForm()
         }
     }
