@@ -2,7 +2,7 @@ package com.rashmi.birthdayreminder.di
 
 import android.content.Context
 import androidx.room.Room
-import com.rashmi.birthdayreminder.db.BirthdayDB
+import com.rashmi.birthdayreminder.data.db.BirthdayDB
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

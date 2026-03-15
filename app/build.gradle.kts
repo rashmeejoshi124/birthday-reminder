@@ -66,8 +66,14 @@ dependencies {
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.nav.compose)
 
+
     //room
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
+
+    //WorkManager
+    implementation(libs.work.runtime)
+    implementation(libs.hilt.work)
+    ksp(libs.hilt.work.compiler)
 }

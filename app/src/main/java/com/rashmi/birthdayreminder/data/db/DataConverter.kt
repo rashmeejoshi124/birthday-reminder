@@ -1,4 +1,4 @@
-package com.rashmi.birthdayreminder.db
+package com.rashmi.birthdayreminder.data.db
 
 import androidx.room.TypeConverter
 import java.time.LocalDate

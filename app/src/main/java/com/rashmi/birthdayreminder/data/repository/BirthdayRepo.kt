@@ -1,7 +1,7 @@
-package com.rashmi.birthdayreminder.usecase
+package com.rashmi.birthdayreminder.data.repository
 
-import com.rashmi.birthdayreminder.db.BirthdayDao
-import com.rashmi.birthdayreminder.db.BirthdayEntity
+import com.rashmi.birthdayreminder.data.db.BirthdayDao
+import com.rashmi.birthdayreminder.data.db.BirthdayEntity
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 import javax.inject.Inject

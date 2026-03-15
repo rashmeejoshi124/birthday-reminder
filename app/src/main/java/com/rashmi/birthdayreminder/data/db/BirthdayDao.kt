@@ -1,4 +1,4 @@
-package com.rashmi.birthdayreminder.db
+package com.rashmi.birthdayreminder.data.db
 
 import androidx.room.Dao
 import androidx.room.Insert

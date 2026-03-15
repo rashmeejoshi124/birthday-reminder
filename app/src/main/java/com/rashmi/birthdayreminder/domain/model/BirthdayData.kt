@@ -1,4 +1,4 @@
-package com.rashmi.birthdayreminder.models
+package com.rashmi.birthdayreminder.domain.model
 
 import java.time.LocalDate
 

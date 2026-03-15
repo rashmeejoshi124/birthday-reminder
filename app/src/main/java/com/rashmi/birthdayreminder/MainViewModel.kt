@@ -2,12 +2,16 @@ package com.rashmi.birthdayreminder
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rashmi.birthdayreminder.models.BirthdayData
-import com.rashmi.birthdayreminder.usecase.BirthdayRepo
+import com.rashmi.birthdayreminder.domain.usecase.IGetSortedBirthdayUseCase
+import com.rashmi.birthdayreminder.domain.model.BirthdayData
+import com.rashmi.birthdayreminder.domain.model.UiEvent
+import com.rashmi.birthdayreminder.data.repository.IBirthdayRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -18,14 +22,18 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val repository: BirthdayRepo
+    private val repository: IBirthdayRepo,
+    private val sortedBirthdaysUseCase: IGetSortedBirthdayUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(BirthdayData())
     val uiState: StateFlow<BirthdayData> = _uiState.asStateFlow()
     val formatter = DateTimeFormatter.ofPattern("ddMMyyyy")
 
-    val birthdays = repository.getBirthdays().stateIn(
+    private val _events = MutableSharedFlow<UiEvent>()
+    val events = _events.asSharedFlow()
+
+    val birthdays = sortedBirthdaysUseCase().stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5000),
         emptyList()
@@ -78,6 +86,7 @@ class MainViewModel @Inject constructor(
                 name = name,
                 date = date
             )
+            _events.emit(UiEvent.BirthdayAdded)
             clearForm()
         }
     }

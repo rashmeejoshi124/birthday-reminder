@@ -1,8 +1,7 @@
-package com.rashmi.birthdayreminder.db
+package com.rashmi.birthdayreminder.data.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 
 @Database(

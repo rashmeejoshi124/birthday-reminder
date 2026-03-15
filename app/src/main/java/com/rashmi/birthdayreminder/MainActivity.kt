@@ -1,6 +1,7 @@
 package com.rashmi.birthdayreminder
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -30,12 +31,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -44,8 +47,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rashmi.birthdayreminder.compose.mainactivity.TopAppBar
-import com.rashmi.birthdayreminder.db.BirthdayEntity
-import com.rashmi.birthdayreminder.models.BirthdayData
+import com.rashmi.birthdayreminder.domain.util.birthdayLabel
+import com.rashmi.birthdayreminder.domain.model.BirthdayData
+import com.rashmi.birthdayreminder.domain.model.UiEvent
 import com.rashmi.birthdayreminder.ui.theme.BirthdayReminderTheme
 import com.rashmi.birthdayreminder.ui.theme.Black
 import com.rashmi.birthdayreminder.ui.theme.Typography
@@ -82,7 +86,16 @@ fun MainScreen(
     val uiState by vm.uiState.collectAsStateWithLifecycle()
     var showDatePicker by remember { mutableStateOf(false) }
     val birthdays by vm.birthdays.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
+    LaunchedEffect(Unit) {
+        vm.events.collect { event ->
+            when(event) {
+                UiEvent.BirthdayAdded -> {
+                    Toast.makeText(context, "Birthday Added", Toast.LENGTH_SHORT).show()                }
+            }
+        }
+    }
 
     Column {
         AddBirthday(
@@ -223,7 +236,7 @@ fun AddBirthday(
 @Composable
 fun BirthdayList(
     modifier: Modifier = Modifier,
-    birthdays: List<BirthdayEntity>
+    birthdays: List<BirthdayData>
 ) {
     Column(
         modifier = modifier.padding(horizontal = dimensionResource(R.dimen.ds_30dp))
@@ -239,7 +252,7 @@ fun BirthdayList(
         )
 
         LazyColumn {
-            items(birthdays, key = { it.id }) {
+            items(birthdays) {
                 BirthdayItem(
                     birthdayItem = it,
                     modifier = Modifier
@@ -252,10 +265,10 @@ fun BirthdayList(
 @Composable
 fun BirthdayItem(
     modifier: Modifier = Modifier,
-    birthdayItem: BirthdayEntity
+    birthdayItem: BirthdayData
 ) {
     val formatter = DateTimeFormatter.ofPattern("dd MMM")
-
+    val label: String = birthdayItem.date?.birthdayLabel() ?: ""
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -270,11 +283,16 @@ fun BirthdayItem(
                 style = Typography.titleMedium
             )
             Text(
-                text = birthdayItem.date.format(formatter),
+                text = birthdayItem.date?.format(formatter) ?: "",
                 style = Typography.bodyMedium
             )
         }
 
+        Text(
+            text = label,
+            style = Typography.bodyMedium,
+            color = Black
+        )
         Icon(
             imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
             contentDescription = null,
