@@ -47,9 +47,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rashmi.birthdayreminder.compose.mainactivity.TopAppBar
-import com.rashmi.birthdayreminder.domain.util.birthdayLabel
 import com.rashmi.birthdayreminder.domain.model.BirthdayData
 import com.rashmi.birthdayreminder.domain.model.UiEvent
+import com.rashmi.birthdayreminder.domain.util.birthdayLabel
+import com.rashmi.birthdayreminder.ui.permissions.RequestNotificationPermission
 import com.rashmi.birthdayreminder.ui.theme.BirthdayReminderTheme
 import com.rashmi.birthdayreminder.ui.theme.Black
 import com.rashmi.birthdayreminder.ui.theme.Typography
@@ -71,6 +72,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     topBar = { TopAppBar() }
                 ) { innerPadding ->
+                    RequestNotificationPermission()
                     MainScreen(modifier = Modifier.padding(innerPadding))
                 }
             }

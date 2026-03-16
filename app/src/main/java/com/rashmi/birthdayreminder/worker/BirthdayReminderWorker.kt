@@ -4,6 +4,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
@@ -24,8 +25,19 @@ class BirthdayReminderWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
-        val name = inputData.getString(KEY_NAME) ?: return Result.failure()
-        val dateString = inputData.getString(KEY_DATE) ?: return Result.failure()
+        Log.d("BirthdayWorker", "Worker started")
+        val name = inputData.getString(KEY_NAME)
+
+        if (name == null) {
+            Log.e("BirthdayWorker", "Name missing")
+            return Result.failure()
+        }
+        val dateString = inputData.getString(KEY_DATE)
+
+        if (dateString == null) {
+            Log.e("BirthdayWorker", "date missing")
+            return Result.failure()
+        }
         val id = inputData.getInt(KEY_ID, -1)
 
         val birthday = LocalDate.parse(dateString)

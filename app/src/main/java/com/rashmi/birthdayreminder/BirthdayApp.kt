@@ -3,6 +3,7 @@ package com.rashmi.birthdayreminder
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.util.Log
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.rashmi.birthdayreminder.notifications.NotificationConstants
@@ -17,9 +18,12 @@ class BirthdayApp : Application(), Configuration.Provider {
 
     //Use Hilt to create Workers
     override val workManagerConfiguration: Configuration
-        get() = Configuration.Builder()
-            .setWorkerFactory(workerFactory)
-            .build()
+        get() {
+            Log.d("BirthdayWorker", "Custom configuration provided ✅")
+            return Configuration.Builder()
+                .setWorkerFactory(workerFactory)
+                .build()
+        }
 
     override fun onCreate() {
         super.onCreate()

@@ -1,5 +1,6 @@
 package com.rashmi.birthdayreminder.domain.usecase
 
+import android.util.Log
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
@@ -8,6 +9,8 @@ import com.rashmi.birthdayreminder.domain.util.nextBirthday
 import com.rashmi.birthdayreminder.worker.BirthdayReminderWorker
 import java.time.Duration
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class ScheduleBirthdayReminderUseCase @Inject constructor(
@@ -18,10 +21,15 @@ class ScheduleBirthdayReminderUseCase @Inject constructor(
         name: String,
         birthday: LocalDate
     ) {
-        val today = LocalDate.now()
         val nextBirthday = birthday.nextBirthday()
 
-        val delay = Duration.between(today, nextBirthday.atStartOfDay())
+        val delay = maxOf(
+            Duration.ZERO,
+            Duration.between(LocalDateTime.now(), nextBirthday.atStartOfDay())
+        )
+        // val tempDelay = Duration.ofSeconds(10)
+
+        Log.d("BirthdayWorker", "inside invoke")
 
         val inputData = workDataOf(
             BirthdayReminderWorker.KEY_NAME to name,
@@ -31,9 +39,9 @@ class ScheduleBirthdayReminderUseCase @Inject constructor(
 
         val request = OneTimeWorkRequestBuilder<BirthdayReminderWorker>()
             .setInputData(inputData)
-            .setInitialDelay(delay)
+            .setInitialDelay(delay.toMillis(), TimeUnit.MILLISECONDS)
             .build()
-
+        Log.d("BirthdayWorker", "Worker enqueued $id - $name - $nextBirthday")
         workManager.enqueueUniqueWork(
             uniqueWorkName = uniqueWorkName(id),
             ExistingWorkPolicy.REPLACE,
