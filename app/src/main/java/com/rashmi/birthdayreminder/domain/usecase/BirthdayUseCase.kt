@@ -28,7 +28,8 @@ class BirthdayUseCase @Inject constructor(
                 name = birthdayData.name,
                 date = birthdayData.date
             )
-            scheduleReminder(id.toInt(), birthdayData.name, birthdayData.date)
+            if (id >= 0)
+                scheduleReminder(id.toInt(), birthdayData.name, birthdayData.date)
         }
     }
 
