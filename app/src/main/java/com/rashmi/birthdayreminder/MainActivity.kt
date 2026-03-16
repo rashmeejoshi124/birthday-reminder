@@ -16,7 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
+import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.rounded.DateRange
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -92,9 +92,10 @@ fun MainScreen(
 
     LaunchedEffect(Unit) {
         vm.events.collect { event ->
-            when(event) {
+            when (event) {
                 UiEvent.BirthdayAdded -> {
-                    Toast.makeText(context, "Birthday Added", Toast.LENGTH_SHORT).show()                }
+                    Toast.makeText(context, "Birthday Added", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
@@ -110,7 +111,8 @@ fun MainScreen(
         )
         BirthdayList(
             birthdays = birthdays,
-            modifier = Modifier
+            modifier = Modifier,
+            deleteBirthday = vm::deleteBirthday
         )
 
         if (showDatePicker) {
@@ -238,7 +240,8 @@ fun AddBirthday(
 @Composable
 fun BirthdayList(
     modifier: Modifier = Modifier,
-    birthdays: List<BirthdayData>
+    birthdays: List<BirthdayData>,
+    deleteBirthday: (Int) -> Unit
 ) {
     Column(
         modifier = modifier.padding(horizontal = dimensionResource(R.dimen.ds_30dp))
@@ -257,7 +260,8 @@ fun BirthdayList(
             items(birthdays) {
                 BirthdayItem(
                     birthdayItem = it,
-                    modifier = Modifier
+                    modifier = Modifier,
+                    deleteBirthday = { deleteBirthday(it.id) }
                 )
             }
         }
@@ -267,7 +271,8 @@ fun BirthdayList(
 @Composable
 fun BirthdayItem(
     modifier: Modifier = Modifier,
-    birthdayItem: BirthdayData
+    birthdayItem: BirthdayData,
+    deleteBirthday: () -> Unit
 ) {
     val formatter = DateTimeFormatter.ofPattern("dd MMM")
     val label: String = birthdayItem.date?.birthdayLabel() ?: ""
@@ -293,12 +298,35 @@ fun BirthdayItem(
         Text(
             text = label,
             style = Typography.bodyMedium,
-            color = Black
+            color = Black,
+            modifier = Modifier.padding(end = 12.dp)
         )
-        Icon(
-            imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
-            contentDescription = null,
-            modifier = Modifier.size(40.dp)
+        IconButton(
+            onClick = { deleteBirthday.invoke() },
+            enabled = true
+        ) {
+            Icon(
+                imageVector = Icons.Default.DeleteForever,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(40.dp)
+                    .padding(end = 8.dp)
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun BirthdayItemPreview() {
+    BirthdayReminderTheme {
+        BirthdayItem(
+            birthdayItem = BirthdayData(
+                "Rashmi",
+                dateDigits = "25101998",
+                date = LocalDate.now(),
+            ),
+            deleteBirthday = { }
         )
     }
 }
@@ -307,7 +335,7 @@ fun BirthdayItem(
 @Composable
 private fun BdayListPreview() {
     BirthdayReminderTheme {
-        BirthdayList(birthdays = emptyList())
+        BirthdayList(birthdays = emptyList()) { }
     }
 }
 

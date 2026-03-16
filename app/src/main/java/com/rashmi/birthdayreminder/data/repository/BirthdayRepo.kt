@@ -21,4 +21,8 @@ class BirthdayRepo @Inject constructor(
     override fun getBirthdays(): Flow<List<BirthdayEntity>> {
         return dao.getBirthdays()
     }
+
+    override suspend fun deleteBirthday(id: Int) {
+        dao.deleteBirthday(id)
+    }
 }

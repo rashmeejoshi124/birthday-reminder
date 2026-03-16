@@ -3,10 +3,11 @@ package com.rashmi.birthdayreminder.di
 import android.content.Context
 import androidx.work.WorkManager
 import com.rashmi.birthdayreminder.data.db.BirthdayDao
-import com.rashmi.birthdayreminder.domain.usecase.GetSortedBirthdaysUseCase
-import com.rashmi.birthdayreminder.domain.usecase.IGetSortedBirthdayUseCase
 import com.rashmi.birthdayreminder.data.repository.BirthdayRepo
 import com.rashmi.birthdayreminder.data.repository.IBirthdayRepo
+import com.rashmi.birthdayreminder.domain.usecase.BirthdayUseCase
+import com.rashmi.birthdayreminder.domain.usecase.CancelBirthdayReminderUseCase
+import com.rashmi.birthdayreminder.domain.usecase.IBirthdayUseCase
 import com.rashmi.birthdayreminder.domain.usecase.ScheduleBirthdayReminderUseCase
 import dagger.Module
 import dagger.Provides
@@ -25,13 +26,21 @@ object AppModule {
     }
 
     @Provides
-    fun providesSortedBirthdayUseCase(repo: IBirthdayRepo): IGetSortedBirthdayUseCase {
-        return GetSortedBirthdaysUseCase(repo)
+    fun providesSortedBirthdayUseCase(
+        repo: IBirthdayRepo,
+        scheduleBirthdayReminderUseCase: ScheduleBirthdayReminderUseCase,
+        cancelBirthdayReminderUseCase: CancelBirthdayReminderUseCase
+    ): IBirthdayUseCase {
+        return BirthdayUseCase(repo, scheduleBirthdayReminderUseCase, cancelBirthdayReminderUseCase)
     }
 
     @Provides
     fun provideScheduleBirthdayReminderUseCase(workManager: WorkManager) =
         ScheduleBirthdayReminderUseCase(workManager)
+
+    @Provides
+    fun provideCancelBirthdayReminderUseCase(workManager: WorkManager) =
+        CancelBirthdayReminderUseCase(workManager)
 
     @Provides
     @Singleton

@@ -2,12 +2,11 @@ package com.rashmi.birthdayreminder
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rashmi.birthdayreminder.domain.usecase.IGetSortedBirthdayUseCase
 import com.rashmi.birthdayreminder.domain.model.BirthdayData
 import com.rashmi.birthdayreminder.domain.model.UiEvent
-import com.rashmi.birthdayreminder.data.repository.IBirthdayRepo
-import com.rashmi.birthdayreminder.domain.usecase.ScheduleBirthdayReminderUseCase
+import com.rashmi.birthdayreminder.domain.usecase.IBirthdayUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -23,10 +22,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val repository: IBirthdayRepo,
-    private val sortedBirthdaysUseCase: IGetSortedBirthdayUseCase,
-    private val scheduleReminder: ScheduleBirthdayReminderUseCase
-
+    private val birthdayUseCase: IBirthdayUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(BirthdayData())
@@ -36,7 +32,7 @@ class MainViewModel @Inject constructor(
     private val _events = MutableSharedFlow<UiEvent>()
     val events = _events.asSharedFlow()
 
-    val birthdays = sortedBirthdaysUseCase().stateIn(
+    val birthdays = birthdayUseCase.getSortedBirthdayList().stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5000),
         emptyList()
@@ -85,12 +81,8 @@ class MainViewModel @Inject constructor(
             return
         }
         viewModelScope.launch {
-            val id = repository.insertBirthday(
-                name = name,
-                date = date
-            )
+            birthdayUseCase.addBirthday(_uiState.value)
             _events.emit(UiEvent.BirthdayAdded)
-            scheduleReminder(id.toInt(), name, date)
             clearForm()
         }
     }
@@ -102,6 +94,12 @@ class MainViewModel @Inject constructor(
                 dateDigits = "",
                 date = null
             )
+        }
+    }
+
+    fun deleteBirthday(id: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            birthdayUseCase.deleteBirthday(id)
         }
     }
 

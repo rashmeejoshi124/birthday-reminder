@@ -13,4 +13,7 @@ interface BirthdayDao {
 
     @Query("SELECT * FROM birthdays")
     fun getBirthdays(): Flow<List<BirthdayEntity>>
+
+    @Query("DELETE FROM birthdays WHERE id = :id")
+    suspend fun deleteBirthday(id: Int)
 }

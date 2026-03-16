@@ -14,5 +14,5 @@ data class BirthdayEntity(
 )
 
 fun BirthdayEntity.toUiModel(): BirthdayData {
-    return BirthdayData(name = name, date =  date)
+    return BirthdayData(id = id, name = name, date =  date)
 }
